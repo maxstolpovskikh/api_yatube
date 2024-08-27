@@ -6,11 +6,6 @@ from .permissions import IsAuthorOrReadOnly
 from posts.models import Group, Post
 
 
-# url из ревью тыкал, там 404
-# вот хороший
-# https://www.django-rest-framework.org/api-guide/permissions/#permissions
-
-
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [
