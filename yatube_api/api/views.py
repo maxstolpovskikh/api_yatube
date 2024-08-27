@@ -2,20 +2,13 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions
 
 from .serializers import CommentSerializer, GroupSerializer, PostSerializer
+from .permissions import IsAuthorOrReadOnly
 from posts.models import Group, Post
 
 
 # url из ревью тыкал, там 404
 # вот хороший
 # https://www.django-rest-framework.org/api-guide/permissions/#permissions
-class IsAuthorOrReadOnly(permissions.BasePermission):
-    """
-    Разрешение на редактирование только для автора объекта.
-    """
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return obj.author == request.user
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -35,12 +28,6 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, post=self.get_post())
 
-    def perform_update(self, serializer):
-        super().perform_update(serializer)
-
-    def perform_destroy(self, instance):
-        super().perform_destroy(instance)
-
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
@@ -52,12 +39,6 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-
-    def perform_update(self, serializer):
-        super().perform_update(serializer)
-
-    def perform_destroy(self, instance):
-        super().perform_destroy(instance)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
